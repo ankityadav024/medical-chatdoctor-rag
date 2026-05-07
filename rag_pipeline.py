@@ -1,8 +1,8 @@
 import os
 from dotenv import load_dotenv
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import ConversationalRetrievalChain
@@ -55,18 +55,66 @@ def load_pipeline():
     return chain
  
 def ask_question(chain, question):
+ 
+    casual_responses = {
+
+        "hi": "Hello! How can I help you today?",
+
+        "hello": "Hi! How can I assist you with your medical query?",
+
+        "hey": "Hey! How may I help you?",
+
+        "thanks": "You're welcome!",
+
+        "thank you": "Glad I could help!",
+
+        "bye": "Goodbye! Take care.",
+
+        "goodbye": "Bye! Stay healthy.",
+
+    }
+ 
+    cleaned_question = question.lower().strip()
+ 
+    # Handle casual conversation
+
+    if cleaned_question in casual_responses:
+
+        return {
+
+            "answer": casual_responses[cleaned_question],
+
+            "retrieved_docs": [],
+
+            "sources": [],
+
+            "latency": 0
+
+        }
+ 
+    # Run RAG only for real medical questions
+
     start = time.time()
+ 
     result = chain.invoke({"question": question})
+
     latency = time.time() - start
+
     docs = result["source_documents"]
- 
+
     retrieved_docs = [doc.page_content[:200] for doc in docs]
+
     sources = [doc.metadata for doc in docs]
- 
+
     return {
+
         "answer": result["answer"],
+
         "retrieved_docs": retrieved_docs,
+
         "sources": sources,
+
         "latency": latency,
+
     }
  

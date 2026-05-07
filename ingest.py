@@ -1,21 +1,16 @@
 # 1. Import Library
 
-from langchain.document_loaders import JSONLoader, CSVLoader
-
+from langchain_community.document_loaders import JSONLoader, CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-from langchain.embeddings import HuggingFaceEmbeddings
-
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-import faiss
+# import faiss
 
 import os
-
 from dotenv import load_dotenv
- 
-import warnings
 
+import warnings
 warnings.filterwarnings("ignore")
  
 load_dotenv()
